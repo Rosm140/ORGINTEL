@@ -1,14 +1,17 @@
 from sqlalchemy import text
 
-from database import engine
+from database import SessionLocal
 
 
 def test_connection():
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT 1"))
+    session = SessionLocal()
+    try:
+        result = session.execute(text("SELECT 1"))
         value = result.scalar()
-        print("Database connection successful")
+        print("Database session successful")
         print(f"Result: {value}")
+    finally:
+        session.close()
 
 
 if __name__ == "__main__":
