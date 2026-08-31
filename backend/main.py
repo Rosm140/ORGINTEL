@@ -40,3 +40,8 @@ def create_decision(
     db.refresh(db_decision)
 
     return db_decision
+
+
+@app.get("/decisions", response_model=list[DecisionResponse])
+def get_decisions(db: Session = Depends(get_db)):
+    return db.query(Decision).all()
