@@ -1,22 +1,42 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
+
+from database import SessionLocal
+from models import Decision
+from schemas import DecisionCreate, DecisionResponse
 
 app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 @app.get("/")
 def root():
-    return {"message": "ORGINTEL API is running, Welcome RO"}
+    return {"message": "ORGINTEL API is running"}
 
 
-@app.get("/health")
-def health():
-    return {"status": "healthy", "service": "ORGINTEL API"}
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.post("/decisions", response_model=DecisionResponse)
+def create_decision(
+    decision: DecisionCreate,
+    db: Session = Depends(get_db),
+):
+    db_decision = Decision(
+        title=decision.title,
+        description=decision.description,
+        owner=decision.owner,
+        deadline=decision.deadline,
+        status=decision.status,
+    )
+
+    db.add(db_decision)
+    db.commit()
+    db.refresh(db_decision)
+
+    return db_decision
