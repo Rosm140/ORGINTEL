@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from database import SessionLocal
+from dependencies import get_db
 from models import Decision
 from schemas import DecisionCreate, DecisionResponse
 
@@ -10,16 +10,6 @@ router = APIRouter(
     prefix="/decisions",
     tags=["Decisions"],
 )
-
-
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.post("/", response_model=DecisionResponse)
 def create_decision(
