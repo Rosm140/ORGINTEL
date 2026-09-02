@@ -43,8 +43,16 @@ def create_decision(
 
 
 @app.get("/decisions", response_model=list[DecisionResponse])
-def get_decisions(db: Session = Depends(get_db)):
-    return db.query(Decision).all()
+def get_decisions(
+    status: str | None = None,
+    db: Session = Depends(get_db),
+):
+    query = db.query(Decision)
+
+    if status:
+        query = query.filter(Decision.status == status)
+
+    return query.all()
 
 @app.put("/decisions/{decision_id}", response_model=DecisionResponse)
 def update_decision(
