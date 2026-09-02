@@ -74,3 +74,28 @@ def update_decision(
     db.refresh(db_decision)
 
     return db_decision
+
+@app.delete("/decisions/{decision_id}")
+def delete_decision(
+    decision_id: int,
+    db: Session = Depends(get_db),
+):
+    db_decision = (
+        db.query(Decision)
+        .filter(Decision.id == decision_id)
+        .first()
+    )
+
+    if db_decision is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Decision not found",
+        )
+
+    db.delete(db_decision)
+    db.commit()
+
+    return {
+        "message": "Decision deleted successfully",
+        "id": decision_id,
+    }
