@@ -45,12 +45,16 @@ def create_decision(
 @app.get("/decisions", response_model=list[DecisionResponse])
 def get_decisions(
     status: str | None = None,
+    skip : int = 0,
+    limit : int = 10,
     db: Session = Depends(get_db),
 ):
     query = db.query(Decision)
 
     if status:
         query = query.filter(Decision.status == status)
+
+    query = query.offset(skip).limit(limit)
 
     return query.all()
 
