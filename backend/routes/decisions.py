@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from dependencies import get_db
 from models import Decision
 from schemas import DecisionCreate, DecisionResponse
+from services.decision_service import create_decision
 
 
 router = APIRouter(
@@ -12,23 +13,14 @@ router = APIRouter(
 )
 
 @router.post("/", response_model=DecisionResponse)
-def create_decision(
+def create_decision_route(
     decision: DecisionCreate,
     db: Session = Depends(get_db),
 ):
-    db_decision = Decision(
-        title=decision.title,
-        description=decision.description,
-        owner=decision.owner,
-        deadline=decision.deadline,
-        status=decision.status,
+    return create_decision(
+        db=db,
+        decision=decision,
     )
-
-    db.add(db_decision)
-    db.commit()
-    db.refresh(db_decision)
-
-    return db_decision
 
 
 @router.get("/", response_model=list[DecisionResponse])
