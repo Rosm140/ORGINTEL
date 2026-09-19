@@ -21,3 +21,18 @@ def create_decision(
     db.refresh(db_decision)
 
     return db_decision
+
+def get_decisions(
+    db: Session,
+    status: str | None = None,
+    skip: int = 0,
+    limit: int = 10,
+) -> list[Decision]:
+    query = db.query(Decision)
+
+    if status:
+        query = query.filter(Decision.status == status)
+
+    query = query.offset(skip).limit(limit)
+
+    return query.all()
