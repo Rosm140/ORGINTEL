@@ -36,3 +36,28 @@ def get_decisions(
     query = query.offset(skip).limit(limit)
 
     return query.all()
+
+def update_decision(
+    db: Session,
+    decision_id: int,
+    decision: DecisionCreate,
+) -> Decision | None:
+    db_decision = (
+        db.query(Decision)
+        .filter(Decision.id == decision_id)
+        .first()
+    )
+
+    if db_decision is None:
+        return None
+
+    db_decision.title = decision.title
+    db_decision.description = decision.description
+    db_decision.owner = decision.owner
+    db_decision.deadline = decision.deadline
+    db_decision.status = decision.status
+
+    db.commit()
+    db.refresh(db_decision)
+
+    return db_decision

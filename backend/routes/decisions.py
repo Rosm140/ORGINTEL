@@ -7,6 +7,7 @@ from schemas import DecisionCreate, DecisionResponse
 from services.decision_service import (
     create_decision,
     get_decisions,
+    update_decision,
 )
 
 
@@ -41,15 +42,15 @@ def get_decisions_route(
 
 
 @router.put("/{decision_id}", response_model=DecisionResponse)
-def update_decision(
+def update_decision_route(
     decision_id: int,
     decision: DecisionCreate,
     db: Session = Depends(get_db),
 ):
-    db_decision = (
-        db.query(Decision)
-        .filter(Decision.id == decision_id)
-        .first()
+    db_decision = update_decision(
+        db=db,
+        decision_id=decision_id,
+        decision=decision,
     )
 
     if db_decision is None:
@@ -57,15 +58,6 @@ def update_decision(
             status_code=404,
             detail="Decision not found",
         )
-
-    db_decision.title = decision.title
-    db_decision.description = decision.description
-    db_decision.owner = decision.owner
-    db_decision.deadline = decision.deadline
-    db_decision.status = decision.status
-
-    db.commit()
-    db.refresh(db_decision)
 
     return db_decision
 
