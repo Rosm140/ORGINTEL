@@ -8,6 +8,7 @@ from services.decision_service import (
     create_decision,
     get_decisions,
     update_decision,
+    delete_decision,
 )
 
 
@@ -63,24 +64,20 @@ def update_decision_route(
 
 
 @router.delete("/{decision_id}")
-def delete_decision(
+def delete_decision_route(
     decision_id: int,
     db: Session = Depends(get_db),
 ):
-    db_decision = (
-        db.query(Decision)
-        .filter(Decision.id == decision_id)
-        .first()
+    deleted = delete_decision(
+        db=db,
+        decision_id=decision_id,
     )
 
-    if db_decision is None:
+    if not deleted:
         raise HTTPException(
             status_code=404,
             detail="Decision not found",
         )
-
-    db.delete(db_decision)
-    db.commit()
 
     return {
         "message": "Decision deleted successfully",

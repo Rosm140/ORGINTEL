@@ -61,3 +61,21 @@ def update_decision(
     db.refresh(db_decision)
 
     return db_decision
+
+def delete_decision(
+    db: Session,
+    decision_id: int,
+) -> bool:
+    db_decision = (
+        db.query(Decision)
+        .filter(Decision.id == decision_id)
+        .first()
+    )
+
+    if db_decision is None:
+        return False
+
+    db.delete(db_decision)
+    db.commit()
+
+    return True
