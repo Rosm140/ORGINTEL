@@ -1,10 +1,10 @@
+
 from fastapi import FastAPI
 
-from routes.decisions import router as decisions_router
+from backend.routes.decisions import router as decisions_router
 
 
 app = FastAPI()
-
 
 app.include_router(decisions_router)
 

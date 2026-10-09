@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from models import Decision
-from schemas import DecisionCreate
+from backend.models import Decision
+from backend.schemas import DecisionCreate
 
 
 def create_decision(

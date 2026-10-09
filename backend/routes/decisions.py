@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from dependencies import get_db
-from models import Decision
-from schemas import DecisionCreate, DecisionResponse
-from services.decision_service import (
+from backend.dependencies import get_db
+from backend.models import Decision
+from backend.schemas import DecisionCreate, DecisionResponse
+from backend.services.decision_service import (
     create_decision,
     get_decisions,
     update_decision,
